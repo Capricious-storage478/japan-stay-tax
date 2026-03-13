@@ -154,7 +154,7 @@ export const taxAreas: TaxArea[] = [
     ],
     exemptions: ["school_trips"],
     notes:
-      "Percentage-based tax. Increases from 2% to 3% in April 2026. The 3% includes both town and Hokkaido prefecture portions.",
+      "Percentage-based tax. Increases from 2% to 3% in April 2026. The 3% includes both town and Hokkaido prefecture portions. Unlike all other municipalities, Kutchan allows the tax base to be per person (1人当たり), per room (1部屋当たり), or per building (1棟当たり), matching how the facility prices its accommodation. Pass the applicable unit price as ratePerNight.",
     source:
       "https://www.town.kutchan.hokkaido.jp/town_administration/AccommodationTax/",
   },

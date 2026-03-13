@@ -62,19 +62,32 @@ searchAreas("京都");
 
 ## Important: Per-Person Pricing / 重要：1人あたりの料金
 
-**Japan's accommodation tax is levied per person, not per room.** The `ratePerNight` parameter must be the price **per person per night**.
+**In most municipalities, accommodation tax is levied per person per night.** The `ratePerNight` parameter should be the price **per person per night** for these areas.
 
-**日本の宿泊税は1人あたりに課税されます（1室あたりではありません）。** `ratePerNight` には **1人1泊あたりの料金** を指定してください。
+**ほとんどの自治体では、宿泊税は1人1泊あたりに課税されます。** これらのエリアでは `ratePerNight` に **1人1泊あたりの料金** を指定してください。
+
+### Exception: Kutchan (Niseko) / 例外：倶知安町（ニセコ）
+
+Kutchan is the only municipality that allows the tax base to be **per person, per room, or per building** — whichever matches how the facility prices its accommodation. This is because ~70% of Kutchan's accommodation stock is condominiums and whole-unit rentals that price per room/building, not per person. Pass the applicable unit price as `ratePerNight`.
+
+倶知安町は唯一、課税標準を **1人当たり・1部屋当たり・1棟当たり** のいずれかで計算できる自治体です。これは倶知安の宿泊施設の約70%がコンドミニアムや一棟貸しであり、1室・1棟単位で料金設定されているためです。施設の料金単位に合わせた金額を `ratePerNight` に指定してください。
+
+```typescript
+// Kutchan: pass the price per whatever unit the facility uses
+// 倶知安：施設の料金単位に合わせた金額を渡す
+calculateTax({ areaId: "kutchan", ratePerNight: 50000, date: "2026-04-15" });
+// → { total: 1500 } (3% of ¥50,000 — whether that's per person, per room, or per building)
+```
 
 ### Handling per-room prices from OTAs / OTAの1室あたり料金を扱う場合
 
-Most foreign OTAs (Airbnb, Booking.com, Expedia, etc.) provide per-room prices, not per-person. You must divide by the number of guests before calling `calculateTax`.
+Most foreign OTAs (Airbnb, Booking.com, Expedia, etc.) provide per-room prices, not per-person. **For all municipalities except Kutchan**, you must divide by the number of guests before calling `calculateTax`.
 
-Airbnb・Booking.com・Expediaなどの海外OTAは1室あたりの料金を提供します。`calculateTax` を呼ぶ前に宿泊人数で割ってください。
+Airbnb・Booking.com・Expediaなどの海外OTAは1室あたりの料金を提供します。**倶知安以外の全自治体** では、`calculateTax` を呼ぶ前に宿泊人数で割ってください。
 
 ```typescript
-// Example: Booking.com sends ¥30,000/room/night for 2 guests
-// 例：Booking.comから1室1泊30,000円、2名の場合
+// Example: Booking.com sends ¥30,000/room/night for 2 guests in Tokyo
+// 例：Booking.comから東京の1室1泊30,000円、2名の場合
 const roomRate = 30000;
 const guests = 2;
 const perPerson = Math.floor(roomRate / guests); // ¥15,000
@@ -89,9 +102,9 @@ const totalTax = tax.total * guests;
 // → ¥400 total for the room
 ```
 
-> **Note:** This per-person calculation is how all Japanese municipalities define the tax base. A ¥30,000 room with 1 guest is taxed differently than the same room with 2 guests.
+> **Note:** A ¥30,000 room with 1 guest is taxed differently than the same room with 2 guests — this is how all Japanese municipalities (except Kutchan) define the tax base.
 >
-> **注意：** 1人あたりの計算方式は全自治体共通の課税基準です。同じ30,000円の部屋でも、1名利用と2名利用では宿泊税が異なります。
+> **注意：** 同じ30,000円の部屋でも、1名利用と2名利用では宿泊税が異なります。これは倶知安を除く全自治体共通の課税基準です。
 
 ### What to exclude from the rate / 料金から除外すべきもの
 
@@ -114,7 +127,7 @@ Calculate the accommodation tax for a stay. / 宿泊税を計算します。
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
 | `areaId` | `string` | Yes | Area ID (e.g. `"tokyo"`, `"kyoto"`, `"fukuoka_city"`) |
-| `ratePerNight` | `number` | Yes | **Per person per night** in JPY (1人1泊あたり), excluding meals/tax/service |
+| `ratePerNight` | `number` | Yes | **Per person per night** in JPY (1人1泊あたり) for most areas. For Kutchan: per person, per room, or per building. Excluding meals/tax/service. |
 | `date` | `string` | No | ISO date string (e.g. `"2026-04-01"`). Defaults to today. Used to select applicable rules for areas with date-dependent rates. |
 
 Returns a `TaxResult`:
