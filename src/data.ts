@@ -70,6 +70,17 @@ export const taxAreas: TaxArea[] = [
     rules: [
       {
         authority: { en: "Kyoto City", ja: "京都市" },
+        effectiveFrom: "2018-10-01",
+        effectiveUntil: "2026-02-28",
+        type: "fixed",
+        tiers: [
+          { min: 0, max: 19999, amount: 200 },
+          { min: 20000, max: 49999, amount: 500 },
+          { min: 50000, max: null, amount: 1000 },
+        ],
+      },
+      {
+        authority: { en: "Kyoto City", ja: "京都市" },
         effectiveFrom: "2026-03-01",
         effectiveUntil: null,
         type: "fixed",
@@ -84,7 +95,7 @@ export const taxAreas: TaxArea[] = [
     ],
     exemptions: ["school_trips"],
     notes:
-      "Revised March 2026 with 5 tiers. No exempt threshold — all guests pay at least 200 yen. University/vocational students NOT exempt.",
+      "Revised March 2026 from 3 tiers to 5 tiers with higher rates. No exempt threshold — all guests pay at least 200 yen.",
     source: "https://www.city.kyoto.lg.jp/gyozai/page/0000345893.html",
   },
 

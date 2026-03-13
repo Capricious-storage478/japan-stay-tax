@@ -117,6 +117,28 @@ describe("calculateTax", () => {
   });
 
   // ===========================================
+  // KYOTO (pre Mar 2026)
+  // ===========================================
+  describe("Kyoto (pre Mar 2026)", () => {
+    const date = "2025-12-01";
+
+    it("200 yen under 20,000 yen", () => {
+      const r = calculateTax({ areaId: "kyoto", ratePerNight: 10000, date });
+      expect(r.total).toBe(200);
+    });
+
+    it("500 yen for 20,000-49,999 yen", () => {
+      const r = calculateTax({ areaId: "kyoto", ratePerNight: 35000, date });
+      expect(r.total).toBe(500);
+    });
+
+    it("1,000 yen for 50,000+ yen", () => {
+      const r = calculateTax({ areaId: "kyoto", ratePerNight: 75000, date });
+      expect(r.total).toBe(1000);
+    });
+  });
+
+  // ===========================================
   // KYOTO (post Mar 2026)
   // ===========================================
   describe("Kyoto (post Mar 2026)", () => {
